@@ -1,6 +1,6 @@
 from langchain.tools import Tool
 
-def geocode():
+def geocode(query: str) -> tuple(float, float):
     pass
 
 GeocoderTool = Tool(
