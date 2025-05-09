@@ -12,7 +12,7 @@ class GeocodeInput(BaseModel):
     description="Geocode an address or location name to latitude and longitude (None if not found).",
     args_schema=GeocodeInput
 )
-async def geocode(query: str) -> tuple[float, float] | None:
+def geocode(query: str) -> tuple[float, float] | None:
     geolocator = Nominatim(user_agent=user_agent)
     location = geolocator.geocode(query, exactly_one=True)
     if location:
