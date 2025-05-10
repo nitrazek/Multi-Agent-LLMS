@@ -8,7 +8,7 @@ llm_llama = OllamaLLM(
   base_url=os.environ["OLLAMA_URL"],
 )
 
-agent = initialize_agent(
+input_agent = initialize_agent(
     tools=[geocode],
     llm=llm_llama,
     agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
