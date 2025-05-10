@@ -1,11 +1,11 @@
 import os
 from tools.geocoder import geocode
-from langchain_ollama import OllamaLLM
+from langchain_ollama import ChatOllama
 from langgraph.prebuilt import create_react_agent
 
-ollama_llm = OllamaLLM(
-  model=os.environ["OLLAMA_MODEL"],
-  base_url=os.environ["OLLAMA_URL"],
+ollama_llm = ChatOllama(
+    model=os.environ["OLLAMA_MODEL"],
+    base_url=os.environ["OLLAMA_URL"],
 )
 
 input_agent_prompt = """
