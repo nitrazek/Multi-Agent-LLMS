@@ -34,7 +34,7 @@ def ask_agent():
     question = click.prompt("Podaj pytanie (np. Zaplanuj podróż z Warszawy do Krakowa)")
     
     click.echo("\nAgent myśli...")
-    response = input_agent.run(question)
+    response = input_agent.invoke({ "messages": [{ "role": "user", "content": question }] })
     
     click.echo("\n=== Plan podróży ===")
     click.echo(response)
