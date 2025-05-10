@@ -1,8 +1,16 @@
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv(override=True)
 
 import click
-#from modules.input_module.input_agent import input_agent
+from modules.input_module.input_agent import input_agent
+from langgraph.graph import StateGraph, START, MessagesState
+
+multi_agent_graph = (
+    StateGraph(MessagesState)
+    .add_node(input_agent)
+    .add_edge(START, "input_agent")
+    .compile()
+)
 
 @click.group(invoke_without_command=True)
 @click.pass_context
@@ -36,13 +44,19 @@ def ask_agent():
     question = click.prompt("Podaj pytanie (np. Zaplanuj podróż z Warszawy do Krakowa)")
     
     click.echo("\nAgent myśli...")
-    #response = input_agent.invoke({ "messages": [{ "role": "user", "content": question }] })
-    response = "abc"
+    response = start_agents(question)
     
     click.echo("\n=== Plan podróży ===")
     click.echo(response)
 
     click.prompt("\nNaciśnij Enter, aby wrócić do menu", default="", show_default=False)
+
+def start_agents(question) -> str:
+    response = multi_agent_graph.invoke({ "messages": [{ "role": "user", "content": question }] })
+    click.echo("Debug:")
+    click.echo(response)
+    messages = response.get("messages")
+    return messages[len(messages) - 1].content
 
 if __name__ == "__main__":
     cli()
