@@ -2,12 +2,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 import click
-from modules.input_module.input_agent import input_agent
+#from modules.input_module.input_agent import input_agent
 
-@click.group()
-def cli():
+@click.group(invoke_without_command=True)
+@click.pass_context
+def cli(ctx):
     """Interfejs CLI dla Multi-Agent-LLMS."""
-    pass
+    if not ctx.invoked_subcommand:
+        menu()
 
 @cli.command()
 def menu():
@@ -34,7 +36,8 @@ def ask_agent():
     question = click.prompt("Podaj pytanie (np. Zaplanuj podróż z Warszawy do Krakowa)")
     
     click.echo("\nAgent myśli...")
-    response = input_agent.invoke({ "messages": [{ "role": "user", "content": question }] })
+    #response = input_agent.invoke({ "messages": [{ "role": "user", "content": question }] })
+    response = "abc"
     
     click.echo("\n=== Plan podróży ===")
     click.echo(response)
