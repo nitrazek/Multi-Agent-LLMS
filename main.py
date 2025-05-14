@@ -3,13 +3,43 @@ load_dotenv(override=True)
 
 import click
 from modules.input_module.input_agent import input_agent
+from modules.flight_module.flight_agent import flight_agent
+from modules.hotel_module.hotel_agent import hotel_agent
+from modules.restaurant_module.restaurant_agent import restaurant_agent
+from modules.poi_module.poi_agent import poi_agent
+from modules.analytics_module.analytics_agent import analytics_agent
+from modules.output_module.output_agent import output_agent
+
 from langgraph.graph import StateGraph, START, MessagesState
 
+# Definicja grafu multi-agentowego
 multi_agent_graph = (
     StateGraph(MessagesState)
+    # Input agent
     .add_node(input_agent)
+    # Agenci równolegli (rekomendacje)
+    .add_node(flight_agent)
+    .add_node(hotel_agent)
+    .add_node(restaurant_agent)
+    .add_node(poi_agent)
+    # Analytics agent
+    .add_node(analytics_agent)
+    # Output agent
+    .add_node(output_agent)
+    # Przepływ: input -> równolegle 4 agentów -> analytics -> output
     .add_edge(START, "input_agent")
-    .compile()
+    .add_edge("input_agent", "flight_agent")
+    .add_edge("input_agent", "hotel_agent")
+    .add_edge("input_agent", "restaurant_agent")
+    .add_edge("input_agent", "poi_agent")
+    # Po zakończeniu wszystkich rekomendacji, przechodzimy do analytics
+    .add_edge("flight_agent", "analytics_agent")
+    .add_edge("hotel_agent", "analytics_agent")
+    .add_edge("restaurant_agent", "analytics_agent")
+    .add_edge("poi_agent", "analytics_agent")
+    # Analytics -> output
+    .add_edge("analytics_agent", "output_agent")
+    .compile(parallel_edges=True)  # Pozwala na równoległe wywołania agentów
 )
 
 @click.group(invoke_without_command=True)
@@ -43,7 +73,7 @@ def ask_agent():
     click.echo("=== Zapytaj agenta ===")
     question = click.prompt("Podaj pytanie (np. Zaplanuj podróż z Warszawy do Krakowa)")
     
-    click.echo("\nAgent myśli...")
+    click.echo("\nAgenci myślą...")
     response = start_agents(question)
     
     click.echo("\n=== Plan podróży ===")
@@ -53,10 +83,8 @@ def ask_agent():
 
 def start_agents(question) -> str:
     response = multi_agent_graph.invoke({ "messages": [{ "role": "user", "content": question }] })
-    click.echo("Debug:")
-    click.echo(response)
     messages = response.get("messages")
-    return messages[len(messages) - 1].content
+    return messages[-1].content if messages else "Brak odpowiedzi od agentów."
 
 if __name__ == "__main__":
     cli()
