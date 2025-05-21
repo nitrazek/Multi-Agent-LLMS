@@ -64,38 +64,21 @@ multi_agent_graph = (
     # Przepływ: input -> równolegle 4 agentów -> analytics -> output
     .add_edge(START, "input_agent")
     .add_edge("input_agent", "flight_agent")
-<<<<<<< HEAD
     # .add_edge("input_agent", "hotel_agent")
     # .add_edge("input_agent", "restaurant_agent")
     # .add_edge("input_agent", "poi_agent")
     # Po zakończeniu wszystkich rekomendacji, przechodzimy do analytics
-=======
-    # .add_edge(START, "input_agent")
-    # .add_edge("input_agent", "flight_agent")
-    # .add_edge("input_agent", "hotel_agent")
-    # .add_edge("input_agent", "restaurant_agent")
-    # .add_edge("input_agent", "poi_agent")
-    # # Po zakończeniu wszystkich rekomendacji, przechodzimy do analytics
->>>>>>> 96b4000c89be7d7bb22f13856998acd508b4fd8f
     # .add_edge("flight_agent", "analytics_agent")
     # .add_edge("hotel_agent", "analytics_agent")
     # .add_edge("restaurant_agent", "analytics_agent")
     # .add_edge("poi_agent", "analytics_agent")
-<<<<<<< HEAD
     # Rekomendacje + analytics -> output
-=======
-    # # Rekomendacje + analytics -> output
->>>>>>> 96b4000c89be7d7bb22f13856998acd508b4fd8f
     # .add_edge("flight_agent", "output_agent")
     # .add_edge("hotel_agent", "output_agent")
     # .add_edge("restaurant_agent", "output_agent")
     # .add_edge("poi_agent", "output_agent")
     # .add_edge("analytics_agent", "output_agent")
-<<<<<<< HEAD
     .compile()
-=======
-    .compile(debug=False)
->>>>>>> 96b4000c89be7d7bb22f13856998acd508b4fd8f
 )
 
 @click.group(invoke_without_command=True)
