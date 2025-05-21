@@ -1,13 +1,8 @@
-import os
 from tools.flights import search_flights
-from langchain_ollama import ChatOllama
 from langgraph.prebuilt import create_react_agent
 from langgraph_supervisor import create_supervisor
 
-ollama_llm = ChatOllama(
-    model=os.environ["OLLAMA_MODEL"],
-    base_url=os.environ["OLLAMA_URL"],
-)
+
 
 # flight_agent_prompt = """
 # Jesteś agentem wyszukiwania lotów.
@@ -26,6 +21,7 @@ flight_agent_prompt = """
 Powiedz jak się nazywa stolica Polski.
 """
 
+<<<<<<< HEAD
 flight_agent = create_react_agent(
     name="flight_agent",
     model=ollama_llm,
@@ -33,3 +29,12 @@ flight_agent = create_react_agent(
     tools=[],
     prompt=flight_agent_prompt
 )
+=======
+def create_flight_agent(ollama_llm):
+    return create_react_agent(
+        name="flight_agent",
+        model=ollama_llm,
+        tools=[search_flights],
+        prompt=flight_agent_prompt
+    )
+>>>>>>> 96b4000c89be7d7bb22f13856998acd508b4fd8f
