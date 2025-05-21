@@ -2,6 +2,7 @@ import os
 from tools.hotels import search_hotels
 from langchain_ollama import ChatOllama
 from langgraph.prebuilt import create_react_agent
+from modules.src.pre_model_hook import pre_model_hook
 
 ollama_llm = ChatOllama(
     model=os.environ["OLLAMA_MODEL"],
@@ -19,5 +20,6 @@ hotel_agent = create_react_agent(
     name="hotel_agent",
     model=ollama_llm,
     tools=[search_hotels],
-    prompt=hotel_agent_prompt
+    prompt=hotel_agent_prompt,
+    pre_model_hook=pre_model_hook
 )

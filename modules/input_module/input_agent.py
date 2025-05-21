@@ -1,7 +1,7 @@
 import os
 from tools.geocoder import geocode
 from langchain_ollama import ChatOllama
-from langgraph.prebuilt import create_react_agent
+from langgraph.prebuilt.chat_agent_executor import create_react_agent
 
 ollama_llm = ChatOllama(
     model=os.environ["OLLAMA_MODEL"],
