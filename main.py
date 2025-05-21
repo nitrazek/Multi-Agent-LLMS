@@ -88,7 +88,7 @@ def ask_agent():
 def start_agents(question) -> str:
     response = multi_agent_graph.invoke({ "messages": [{ "role": "user", "content": question }] })
     messages = response.get("messages")
-    return messages[-1].content if messages else "Brak odpowiedzi od agentów."
+    return messages[-1].content if messages != None and messages[-1].content != '' else "Brak odpowiedzi od agentów."
 
 if __name__ == "__main__":
     cli()
