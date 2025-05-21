@@ -10,22 +10,26 @@ from modules.poi_module.poi_agent import poi_agent
 from modules.analytics_module.analytics_agent import analytics_agent
 from modules.output_module.output_agent import output_agent
 
+from langgraph.pregel import Pregel
 from langchain_core.runnables import RunnableConfig
 from langgraph.utils.runnable import RunnableCallable
 from langgraph.graph import StateGraph, START, MessagesState
 
-def make_call_agent(agent):
+def make_call_agent(agent: Pregel):
     def call_agent(state: dict, config: RunnableConfig) -> dict:
         print(agent.name.upper())
         print("INPUT")
         print(state["messages"])
         output = agent.invoke(state)
         print("OUTPUT")
-        print(output["messages"])
+        print(output["messages"][-1])
         print("\n")
         return output
 
     return RunnableCallable(call_agent)
+
+def agent_1(state: MessagesState):
+    response = 
 
 # Definicja grafu multi-agentowego
 multi_agent_graph = (
