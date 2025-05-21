@@ -1,8 +1,6 @@
 from tools.flights import search_flights
 from langgraph.prebuilt import create_react_agent
 
-
-
 flight_agent_prompt = """
 Jesteś agentem wyszukiwania lotów.
 Otrzymujesz dane dotyczące miejsca początkowego, docelowego oraz daty podróży.
