@@ -43,7 +43,7 @@ multi_agent_graph = (
     .add_edge("restaurant_agent", "output_agent")
     .add_edge("poi_agent", "output_agent")
     .add_edge("analytics_agent", "output_agent")
-    .compile()
+    .compile(debug=True)
 )
 
 @click.group(invoke_without_command=True)
