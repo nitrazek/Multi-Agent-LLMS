@@ -1,7 +1,10 @@
 from dotenv import load_dotenv
 load_dotenv(override=True)
 
+import os
 import click
+from langchain_ollama import ChatOllama
+from langgraph.graph import StateGraph, START, MessagesState
 from modules.input_module.input_agent import create_input_agent
 from modules.flight_module.flight_agent import create_flight_agent
 from modules.hotel_module.hotel_agent import create_hotel_agent
@@ -9,10 +12,7 @@ from modules.restaurant_module.restaurant_agent import create_restaurant_agent
 from modules.poi_module.poi_agent import create_poi_agent
 from modules.analytics_module.analytics_agent import create_analytics_agent
 from modules.output_module.output_agent import create_output_agent
-import os
-from langchain_ollama import ChatOllama
 
-from langgraph.graph import StateGraph, START, MessagesState
 
 ollama_llm = ChatOllama(
     model=os.environ["OLLAMA_MODEL"],
