@@ -1,12 +1,5 @@
-import os
 from tools.geocoder import geocode
-from langchain_ollama import ChatOllama
 from langgraph.prebuilt import create_react_agent
-
-ollama_llm = ChatOllama(
-    model=os.environ["OLLAMA_MODEL"],
-    base_url=os.environ["OLLAMA_URL"],
-)
 
 input_agent_prompt = """
 Jesteś wejściowym agentem w systemie planowania podróży. Twoim zadaniem jest odbieranie zapytań od użytkowników i przekształcanie ich w ustrukturyzowane dane dla kolejnych agentów. Wykonaj następujące kroki:
@@ -32,9 +25,10 @@ Jesteś wejściowym agentem w systemie planowania podróży. Twoim zadaniem jest
 }
 """
 
-input_agent = create_react_agent(
-    name="input_agent",
-    model=ollama_llm,
-    tools=[geocode],
-    prompt=input_agent_prompt
-)
+def create_input_agent(ollama_llm):
+    return create_react_agent(
+        name="input_agent",
+        model=ollama_llm,
+        tools=[geocode],
+        prompt=input_agent_prompt
+    )

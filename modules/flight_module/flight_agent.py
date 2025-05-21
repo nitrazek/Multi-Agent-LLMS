@@ -1,12 +1,7 @@
-import os
 from tools.flights import search_flights
-from langchain_ollama import ChatOllama
 from langgraph.prebuilt import create_react_agent
 
-ollama_llm = ChatOllama(
-    model=os.environ["OLLAMA_MODEL"],
-    base_url=os.environ["OLLAMA_URL"],
-)
+
 
 flight_agent_prompt = """
 Jesteś agentem wyszukiwania lotów.
@@ -15,9 +10,10 @@ Twoim zadaniem jest znaleźć najtańsze dostępne loty w podanym terminie, korz
 Zwróć najważniejsze informacje: linia lotnicza, godziny, cena, czas lotu.
 """
 
-flight_agent = create_react_agent(
-    name="flight_agent",
-    model=ollama_llm,
-    tools=[search_flights],
-    prompt=flight_agent_prompt
-)
+def create_flight_agent(ollama_llm):
+    return create_react_agent(
+        name="flight_agent",
+        model=ollama_llm,
+        tools=[search_flights],
+        prompt=flight_agent_prompt
+    )
