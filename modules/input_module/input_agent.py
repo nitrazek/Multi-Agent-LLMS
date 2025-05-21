@@ -2,7 +2,6 @@ import os
 from tools.geocoder import geocode
 from langchain_ollama import ChatOllama
 from langgraph.prebuilt import create_react_agent
-from modules.src.pre_model_hook import pre_model_hook
 
 ollama_llm = ChatOllama(
     model=os.environ["OLLAMA_MODEL"],
@@ -37,6 +36,5 @@ input_agent = create_react_agent(
     name="input_agent",
     model=ollama_llm,
     tools=[geocode],
-    prompt=input_agent_prompt,
-    pre_model_hook=pre_model_hook
+    prompt=input_agent_prompt
 )
