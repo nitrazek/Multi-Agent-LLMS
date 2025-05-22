@@ -64,8 +64,10 @@ def print_state_messages(state):
 def make_call_agent(agent: Pregel):
     def call_agent(state: dict, config: RunnableConfig) -> dict:
         output = agent.invoke({ **state, "messages": state["messages"] + [HumanMessage(content="")] })
-        print(output)
         output["messages"] = [message for message in output["messages"] if not isinstance(message, HumanMessage) or message.content != ""]
+        if output.get("structured_response") is not None:
+            output["messages"] = output["messages"][:-1] + [AIMessage(content=output["structured_response"].model_dump_json(), name=agent.name)]
+            del output["structured_response"]
         # Wypisz odpowiedź agenta zgodnie z poziomem debugowania
         if debug_level is DebugLevel.VERBOSE:
             with print_lock:
@@ -151,7 +153,7 @@ def ask_agent():
     state = multi_agent_graph.invoke({ "messages": [{ "role": "user", "content": question }] })
     messages = state.get("messages")
     response = messages[-1].content if messages and messages[-1].content != '' else "Brak odpowiedzi od agentów."
-    
+
     click.echo("\n=== Plan podróży ===")
     click.echo(response)
 
