@@ -59,37 +59,16 @@ def make_call_agent(agent: Pregel):
 
     return RunnableCallable(call_agent)
 
-# def agent_1(state: MessagesState) -> Command[Literal["agent_2"]]:
-#     print("agent1: input")
-#     print(state)
-#     response: AIMessage = ollama_llm.invoke(state["messages"])
-#     print("agent1: output")
-#     print(response)
-#     human_response = HumanMessage(content=response.content)
-#     return Command(goto="agent_2", update={ "messages": [human_response] })
-
-# def agent_2(state: MessagesState) -> Command[Literal[END]]:
-#     print("agent2: input")
-#     print(state)
-#     response = ollama_llm.invoke(state["messages"])
-#     print("agent2: output")
-#     print(response)
-#     return Command(goto=END, update={ "messages": [response] })
-
 # Definicja grafu multi-agentowego
 multi_agent_graph = (
     StateGraph(MessagesState)
-    # .add_node(agent_1)
-    # .add_node(agent_2)
-    # .add_edge(START, "agent_1")
-    # .add_edge("agent_1", "agent_2")
     # Input agent
     .add_node("input_agent", make_call_agent(input_agent))
     # Agenci równolegli (rekomendacje)
     .add_node("flight_agent", make_call_agent(flight_agent))
     .add_node("hotel_agent", make_call_agent(hotel_agent))
-    # .add_node(restaurant_agent)
-    # .add_node(poi_agent)
+    .add_node("restaurant_agent", make_call_agent(restaurant_agent))
+    .add_node("poi_agent", make_call_agent(poi_agent))
     # Analytics agent
     .add_node("analytics_agent", make_call_agent(analytics_agent))
     # Output agent
@@ -98,18 +77,14 @@ multi_agent_graph = (
     .add_edge(START, "input_agent")
     .add_edge("input_agent", "flight_agent")
     .add_edge("input_agent", "hotel_agent")
-    # .add_edge("input_agent", "restaurant_agent")
-    # .add_edge("input_agent", "poi_agent")
+    .add_edge("input_agent", "restaurant_agent")
+    .add_edge("input_agent", "poi_agent")
     # Po zakończeniu wszystkich rekomendacji, przechodzimy do analytics
     .add_edge("flight_agent", "analytics_agent")
     .add_edge("hotel_agent", "analytics_agent")
-    # .add_edge("restaurant_agent", "analytics_agent")
-    # .add_edge("poi_agent", "analytics_agent")
+    .add_edge("restaurant_agent", "analytics_agent")
+    .add_edge("poi_agent", "analytics_agent")
     # Rekomendacje + analytics -> output
-    # .add_edge("flight_agent", "output_agent")
-    # .add_edge("hotel_agent", "output_agent")
-    # .add_edge("restaurant_agent", "output_agent")
-    # .add_edge("poi_agent", "output_agent")
     .add_edge("analytics_agent", "output_agent")
     .compile()
 )
