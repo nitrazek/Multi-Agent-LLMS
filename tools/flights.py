@@ -1,6 +1,6 @@
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
-from amadeus import Client, ResponseError
+from amadeus import Client, ResponseError, Response
 import os
 
 amadeus = Client(
@@ -34,4 +34,4 @@ def search_flights(origin: str, destination: str, departure_date: str, return_da
         response = amadeus.shopping.flight_offers_search.get(**params)
         return response.data
     except ResponseError as e:
-        return {"error": str(e)}
+        return { "contencik": "hehe lool", "error_status": e.response.status_code, "error_content": e.response.result }
