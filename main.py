@@ -14,11 +14,9 @@ from modules.analytics_module.analytics_agent import create_analytics_agent
 from modules.output_module.output_agent import create_output_agent
 
 from langgraph.pregel import Pregel
-from langchain_core.runnables import RunnableConfig
 from langchain_core.messages import HumanMessage, ToolMessage, AIMessage
-from langgraph.utils.runnable import RunnableCallable
-from langgraph.types import Command
-from typing import Literal
+from langgraph.utils.runnable import RunnableCallable, RunnableConfig
+import threading
 
 ollama_llm = ChatOllama(
     model=os.environ["OLLAMA_MODEL"],
@@ -34,6 +32,8 @@ poi_agent = create_poi_agent(ollama_llm)
 analytics_agent = create_analytics_agent(ollama_llm)
 output_agent = create_output_agent(ollama_llm)
 
+print_lock = threading.Lock()
+
 def print_state_messages(state):
     for message in state["messages"]:
         match message.__class__.__name__:
@@ -46,13 +46,12 @@ def print_state_messages(state):
 
 def make_call_agent(agent: Pregel):
     def call_agent(state: dict, config: RunnableConfig) -> dict:
-        print(f"--- {agent.name.upper()} - INPUT ---")
-        print_state_messages(state)
         output = agent.invoke({ **state, "messages": state["messages"] + [HumanMessage(content="")] })
         output["messages"] = [message for message in output["messages"] if not isinstance(message, HumanMessage) or message.content != ""]
-        print(f"--- {agent.name.upper()} - OUTPUT ---")
-        print_state_messages(output)
-        print("\n")
+        with print_lock:
+            print(f"--- {agent.name.upper()} ---")
+            print_state_messages({"messages": [output["messages"][-1]]})
+            print("\n")
         output["messages"] = [message for message in output["messages"] if not isinstance(message, ToolMessage)]
         output["messages"] = [message for message in output["messages"] if not isinstance(message, AIMessage) or len(message.tool_calls) == 0]
         return output
@@ -130,6 +129,10 @@ def ask_agent():
 
 def start_agents(question) -> str:
     response = multi_agent_graph.invoke({ "messages": [{ "role": "user", "content": question }] })
+    #Wypisanie wszystkich wywołań
+    print(f"--- HISTORY ---")
+    print_state_messages(response)
+    print("\n")
     messages = response.get("messages")
     return messages[-1].content if messages != None and messages[-1].content != '' else "Brak odpowiedzi od agentów."
 

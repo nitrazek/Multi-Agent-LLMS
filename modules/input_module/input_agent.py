@@ -1,6 +1,5 @@
 from tools.geocoder import geocode
 from langgraph.prebuilt import create_react_agent
-from modules.src.pre_model_hook import pre_model_hook
 
 input_agent_prompt = """
 Jesteś wejściowym agentem w systemie planowania podróży. Twoim zadaniem jest odbieranie zapytań od użytkowników i przekształcanie ich w ustrukturyzowane dane dla kolejnych agentów. Wykonaj następujące kroki:
