@@ -17,6 +17,7 @@ from langgraph.pregel import Pregel
 from langchain_core.messages import HumanMessage, ToolMessage, AIMessage
 from langgraph.utils.runnable import RunnableCallable, RunnableConfig
 import threading
+import questionary
 
 ollama_llm = ChatOllama(
     model=os.environ["OLLAMA_MODEL"],
@@ -34,6 +35,22 @@ output_agent = create_output_agent(ollama_llm)
 
 print_lock = threading.Lock()
 
+class DebugLevel:
+    STANDARD = "standard"
+    VERBOSE = "verbose"
+    SUPER_VERBOSE = "super verbose"
+
+debug_level = DebugLevel.STANDARD
+
+def set_debug_level():
+    global debug_level
+    click.clear()
+    debug_level = questionary.select(
+        "Wybierz poziom debugowania:",
+        choices=[DebugLevel.STANDARD, DebugLevel.VERBOSE, DebugLevel.SUPER_VERBOSE],
+        default=debug_level
+    ).ask()
+
 def print_state_messages(state):
     for message in state["messages"]:
         match message.__class__.__name__:
@@ -48,14 +65,21 @@ def make_call_agent(agent: Pregel):
     def call_agent(state: dict, config: RunnableConfig) -> dict:
         output = agent.invoke({ **state, "messages": state["messages"] + [HumanMessage(content="")] })
         output["messages"] = [message for message in output["messages"] if not isinstance(message, HumanMessage) or message.content != ""]
-        with print_lock:
-            print(f"--- {agent.name.upper()} ---")
-            print_state_messages({"messages": [output["messages"][-1]]})
-            print("\n")
+        # Wypisz odpowiedź agenta zgodnie z poziomem debugowania
+        if debug_level is DebugLevel.VERBOSE:
+            with print_lock:
+                print(f"\n=== {agent.name} ===")
+                print_state_messages({"messages": [output["messages"][-1]]})
+        elif debug_level is DebugLevel.SUPER_VERBOSE:
+            with print_lock:
+                print(f"\n=== {agent.name} ===")
+                # Wypisz wszystkie nowe wiadomości (czyli te, które pojawiły się w output, a nie było ich w state)
+                new_count = len(output["messages"]) - len(state["messages"])
+                if new_count > 0:
+                    print_state_messages({"messages": output["messages"][-new_count:]})
         output["messages"] = [message for message in output["messages"] if not isinstance(message, ToolMessage)]
         output["messages"] = [message for message in output["messages"] if not isinstance(message, AIMessage) or len(message.tool_calls) == 0]
         return output
-
     return RunnableCallable(call_agent)
 
 # Definicja grafu multi-agentowego
@@ -102,12 +126,15 @@ def menu():
         click.clear()
         click.echo("=== Multi-Agent-LLMS ===")
         click.echo("1. Zapytaj agenta o plan podróży")
-        click.echo("2. Wyjdź")
+        click.echo(f"2. Ustaw poziom debugowania (aktualnie: {debug_level})")
+        click.echo("3. Wyjdź")
         choice = click.prompt("Wybierz opcję", type=int)
 
         if choice == 1:
             ask_agent()
         elif choice == 2:
+            set_debug_level()
+        elif choice == 3:
             click.echo("Do widzenia!")
             break
         else:
@@ -120,21 +147,14 @@ def ask_agent():
     question = click.prompt("Podaj pytanie (np. Zaplanuj podróż z Warszawy do Krakowa)")
     
     click.echo("\nAgenci myślą...")
-    response = start_agents(question)
+    state = multi_agent_graph.invoke({ "messages": [{ "role": "user", "content": question }] })
+    messages = state.get("messages")
+    response = messages[-1].content if messages and messages[-1].content != '' else "Brak odpowiedzi od agentów."
     
     click.echo("\n=== Plan podróży ===")
     click.echo(response)
 
     click.prompt("\nNaciśnij Enter, aby wrócić do menu", default="", show_default=False)
-
-def start_agents(question) -> str:
-    response = multi_agent_graph.invoke({ "messages": [{ "role": "user", "content": question }] })
-    #Wypisanie wszystkich wywołań
-    print(f"--- HISTORY ---")
-    print_state_messages(response)
-    print("\n")
-    messages = response.get("messages")
-    return messages[-1].content if messages != None and messages[-1].content != '' else "Brak odpowiedzi od agentów."
 
 if __name__ == "__main__":
     cli()
