@@ -47,6 +47,7 @@ def print_state_messages(state):
 def make_call_agent(agent: Pregel):
     def call_agent(state: dict, config: RunnableConfig) -> dict:
         output = agent.invoke({ **state, "messages": state["messages"] + [HumanMessage(content="")] })
+        print(output)
         output["messages"] = [message for message in output["messages"] if not isinstance(message, HumanMessage) or message.content != ""]
         with print_lock:
             print(f"--- {agent.name.upper()} ---")
