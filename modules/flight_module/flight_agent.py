@@ -5,7 +5,7 @@ from datetime import datetime, time
 
 flight_agent_prompt = """
 Jesteś agentem wyszukiwania lotów.
-Otrzymujesz dane dotyczące miejsca początkowego, docelowego oraz daty podróży w następującym formacie:
+Otrzymujesz dane dotyczące miejsca początkowego, docelowego oraz daty podróży
 Twoje zadania to:
 - znalezienie najtańszego dostępnego lotu z miejsca początkowego do miejsca docelowego dla podanej daty początkowej
 - znalezienie najtańszego dostępnego powrotnego lotu z miejsca docelowego do miejsca początkowego dla podanej daty końcowej

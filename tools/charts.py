@@ -1,7 +1,8 @@
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 from datetime import datetime
-from os.path import join, dirname, abspath
+from os import makedirs
+from os.path import join, dirname, abspath, exists
 import matplotlib
 import matplotlib.pyplot as plt
 
@@ -24,7 +25,11 @@ def create_chart(title: str, labels: list[str], values: list[float]) -> str:
     plt.xlabel("Kategoria")
     plt.ylabel("Wartość")
     
-    chart_path = join(dirname(abspath(__file__)), "generated_charts", f"chart_{datetime.now().strftime("%Y%m%d%H%M%S")}.png")
+    charts_dir_path = join(dirname(abspath(__file__)), "generated_charts")
+    if not exists(charts_dir_path):
+        makedirs(charts_dir_path)        
+    
+    chart_path = join(charts_dir_path, f"chart_{datetime.now().strftime("%Y%m%d%H%M%S")}.png")
     plt.savefig(chart_path)
     plt.close()
     

@@ -4,6 +4,7 @@ output_agent_prompt = """
 Jesteś agentem podsumowującym.
 Otrzymujesz dane z innych agentów (loty, hotele, restauracje, atrakcje, analiza kosztów).
 Twoim zadaniem jest przygotować kompletny, czytelny plan podróży w języku naturalnym, podsumowując wszystkie informacje i rekomendacje.
+Dla każdego dnia w podanym terminie opisz plan, odwiedzone atrakcje i restauracje
 """
 
 def create_output_agent(ollama_llm):
