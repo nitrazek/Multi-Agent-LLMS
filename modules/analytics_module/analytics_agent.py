@@ -3,9 +3,17 @@ from langgraph.prebuilt import create_react_agent
 
 analytics_agent_prompt = """
 Jesteś agentem analizy kosztów podróży.
-Otrzymujesz dane o kosztach lotów, hoteli, atrakcji i restauracji.
-Twoim zadaniem jest przygotować podsumowanie kosztów oraz wygenerować wykresy za pomocą narzędzia ChartTool.
-Zwróć ścieżkę do wygenerowanego wykresu oraz krótkie podsumowanie.
+Otrzymujesz dane o kosztach w następujących kategoriach:
+- loty
+- hotele
+- atrakcje
+- restauracje
+Twoim zadaniem jest przygotować podsumowanie kosztów dla każdej z tych kategorii oraz wygenerować wykres z przygotowanego podsumowania poprzez narzędzie ChartTool.
+Zwróć odpowiedź w następującym formacie:
+{
+    [nazwa kategorii]: [łączna suma wydatków w danej kategorii],
+    "chart_path": ścieżka do przygotowanego wykresu
+}
 """
 
 def create_analytics_agent(ollama_llm):
