@@ -8,7 +8,19 @@ Otrzymujesz dane dotyczące miejsca początkowego, docelowego oraz daty podróż
 Twoje zadania to:
 - znalezienie najlepszych dostępnych hoteli w miejscu docelowym w podanym terminie
 Do wykonania zadań wykorzystaj narzędzie HotelSearch do wyszukiwania hoteli
+
+Dla każdego hotelu zwróć następujące dane:
+- nazwa hotelu
+- adres hotelu
 """
+
+# hotel_agent_prompt = """
+# Jesteś agentem wyszukiwania hoteli.
+# Otrzymujesz dane dotyczące miejsca początkowego, docelowego oraz daty podróży
+# Twoje zadania to:
+# - znalezienie najlepszych dostępnych hoteli w miejscu docelowym w podanym terminie
+# Do wykonania zadań wykorzystaj narzędzie HotelSearch do wyszukiwania hoteli
+# """
 
 hotel_agent_output_prompt = """
 Odpowiedz w poniższym formacie:
@@ -40,5 +52,5 @@ def create_hotel_agent(ollama_llm):
         model=ollama_llm,
         tools=[search_hotels],
         prompt=hotel_agent_prompt,
-        response_format=(hotel_agent_output_prompt, HotelAgentResponse)
+        # response_format=(hotel_agent_output_prompt, HotelAgentResponse)
     )

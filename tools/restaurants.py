@@ -9,14 +9,14 @@ class RestaurantSearchInput(BaseModel):
     location_name: str = Field(description="City or location name")
     latitude: float = Field(description="Latitude of the location")
     longitude: float = Field(description="Longitude of the location")
-    radius: int = Field(default=10, description="Search radius in kilometers from the given coordinates")
+    radius: int = Field(description="Search radius in kilometers from the given coordinates")
 
 @tool(
     "RestaurantSearch",
     description="Search for restaurants in a given location using TripAdvisor API.",
     args_schema=RestaurantSearchInput
 )
-def search_restaurants(location_name: str, latitude: float, longitude: float, radius: int = 10):
+def search_restaurants(location_name: str, latitude: float, longitude: float, radius: int):
     url = f"https://api.content.tripadvisor.com/api/v1/location/search"
     params = {
         "key": TRIPADVISOR_API_KEY,

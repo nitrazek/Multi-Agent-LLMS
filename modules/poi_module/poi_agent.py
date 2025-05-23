@@ -8,7 +8,22 @@ Otrzymujesz dane dotyczące miejsca początkowego, docelowego oraz daty podróż
 Twoje zadania to:
 - znalezienie najciekawszych atrakcji do zwiedzania w miejscu docelowym w podanym terminie
 Do wykonania zadań wykorzystaj narzędzie POISearch do wyszukiwania atrakcji
+
+Format odpowiedzi:
+Rekomendowane atrakcje:
+
+<dla każdej atrakcji zwróć następujące dane>
+Nazwa atrakcji: <nazwa>
+Adres atrakcji: <adres>
 """
+
+# poi_agent_prompt = """
+# Jesteś agentem wyszukiwania atrakcji turystycznych.
+# Otrzymujesz dane dotyczące miejsca początkowego, docelowego oraz daty podróży
+# Twoje zadania to:
+# - znalezienie najciekawszych atrakcji do zwiedzania w miejscu docelowym w podanym terminie
+# Do wykonania zadań wykorzystaj narzędzie POISearch do wyszukiwania atrakcji
+# """
 
 poi_agent_output_prompt = """
 Odpowiedz w poniższym formacie:
@@ -40,5 +55,5 @@ def create_poi_agent(ollama_llm):
         model=ollama_llm,
         tools=[search_poi],
         prompt=poi_agent_prompt,
-        response_format=(poi_agent_output_prompt, POIAgentResponse)
+        # response_format=(poi_agent_output_prompt, POIAgentResponse)
     )

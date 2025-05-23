@@ -111,12 +111,16 @@ multi_agent_graph = (
     .add_edge("input_agent", "restaurant_agent")
     .add_edge("input_agent", "poi_agent")
     # Po zakończeniu wszystkich rekomendacji, przechodzimy do analytics
-    .add_edge("flight_agent", "analytics_agent")
-    .add_edge("hotel_agent", "analytics_agent")
-    .add_edge("restaurant_agent", "analytics_agent")
-    .add_edge("poi_agent", "analytics_agent")
+    # .add_edge("flight_agent", "analytics_agent")
+    # .add_edge("hotel_agent", "analytics_agent")
+    # .add_edge("restaurant_agent", "analytics_agent")
+    # .add_edge("poi_agent", "analytics_agent")
+    .add_edge("flight_agent", "output_agent")
+    .add_edge("hotel_agent", "output_agent")
+    .add_edge("restaurant_agent", "output_agent")
+    .add_edge("poi_agent", "output_agent")
     # Rekomendacje + analytics -> output
-    .add_edge("analytics_agent", "output_agent")
+    # .add_edge("analytics_agent", "output_agent")
     .compile()
 )
 

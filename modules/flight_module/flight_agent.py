@@ -20,14 +20,16 @@ Twoje zadania to:
 - znalezienie najtańszego dostępnego powrotnego lotu z miejsca docelowego do miejsca początkowego dla podanej daty końcowej
 Do wykonania zadań wykorzystaj narzędzie FlightSearch do wyszukiwania lotów
 
-Dla każdego lotu zwróć następujące dane:
-- linia lotnicza
-- lotnisko początkowe
-- data i godzina odlotu z lotniska początkowego
-- lotnisko docelowe
-- data i godzina przylotu na lotnisko docelowe
-- cena lotu
-- czas lotu
+Format odpowiedzi:
+Rekomendowane loty:
+
+<dla każdego lotu zwróć następujące dane>
+Linia lotnicza: <linia>
+Lotnisko początkowe: <lotnisko początkowe>
+Data i godzina odlotu z lotniska początkowego: <data i godzina odlotu>
+Lotnisko docelowe: <lotnisko docelowe>
+Data i godzina przylotu na lotnisko docelowe: <data i godzina przylotu>
+Czas lotu: <czas>
 """
 
 flight_agent_output_prompt = """

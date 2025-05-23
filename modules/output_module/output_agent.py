@@ -2,9 +2,9 @@ from langgraph.prebuilt import create_react_agent
 
 output_agent_prompt = """
 Jesteś agentem podsumowującym.
-Otrzymujesz dane z innych agentów (loty, hotele, restauracje, atrakcje, analiza kosztów).
+Otrzymujesz listę rekomendowanych lotów, hoteli, restauracji, atrakcji.
 Twoim zadaniem jest przygotować kompletny, czytelny plan podróży w języku naturalnym, podsumowując wszystkie informacje i rekomendacje.
-Dla każdego dnia w podanym terminie opisz plan, odwiedzone atrakcje i restauracje
+Przygotuj plan dla każdego dnia z podziałem na proponowane godziny.
 """
 
 def create_output_agent(ollama_llm):

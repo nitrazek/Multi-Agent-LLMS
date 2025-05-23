@@ -2,12 +2,24 @@ from tools.restaurants import search_restaurants
 from langgraph.prebuilt import create_react_agent
 from pydantic import BaseModel
 
+# restaurant_agent_prompt = """
+# Jesteś agentem wyszukiwania restauracji.
+# Otrzymujesz dane dotyczące miejsca początkowego, docelowego oraz daty podróży
+# Twoim zadania to:
+# - znalezienie najlepszych restauracji w miejscu docelowym w podanym terminie
+# Do wykonania zadań wykorzystaj narzędzie RestaurantSearch do wyszukiwania restauracji
+# """
+
 restaurant_agent_prompt = """
 Jesteś agentem wyszukiwania restauracji.
 Otrzymujesz dane dotyczące miejsca początkowego, docelowego oraz daty podróży
 Twoim zadania to:
-- znalezienie najlepszych restauracji w miejscu docelowym w podanym terminie
+- znalezienie najlepszych restauracji w promieniu 50km od miejsca docelowym w podanym terminie
 Do wykonania zadań wykorzystaj narzędzie RestaurantSearch do wyszukiwania restauracji
+
+Dla każdej restauracji zwróć następujące dane:
+- nazwa restauracji
+- adres restauracji
 """
 
 restaurant_agent_output_prompt = """
@@ -40,5 +52,5 @@ def create_restaurant_agent(ollama_llm):
         model=ollama_llm,
         tools=[search_restaurants],
         prompt=restaurant_agent_prompt,
-        response_format=(restaurant_agent_output_prompt, RestaurantAgentResponse)
+        # response_format=(restaurant_agent_output_prompt, RestaurantAgentResponse)
     )
