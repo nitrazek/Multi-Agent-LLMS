@@ -1,37 +1,27 @@
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
-from amadeus import Client, ResponseError
+import requests
 import os
 
-amadeus = Client(
-    client_id=os.environ["AMADEUS_CLIENT_ID"],
-    client_secret=os.environ["AMADEUS_CLIENT_SECRET"]
-)
+TRIPADVISOR_API_KEY = os.environ["TRIPADVISOR_API_KEY"]
 
 class HotelSearchInput(BaseModel):
-    city_code: str = Field(description="IATA city code (e.g. WAW for Warsaw)")
-    check_in_date: str = Field(description="Check-in date in YYYY-MM-DD format")
-    check_out_date: str = Field(description="Check-out date in YYYY-MM-DD format")
+    location: str = Field(description="City or location name")
 
 @tool(
     "HotelSearch",
     description="Search for hotels in a city and return the best options.",
     args_schema=HotelSearchInput
 )
-def search_hotels(city_code: str, check_in_date: str, check_out_date: str):
-    try:
-        response = amadeus.shopping.hotel_offers.get(
-            cityCode=city_code,
-            checkInDate=check_in_date,
-            checkOutDate=check_out_date,
-            adults=1,
-            roomQuantity=1,
-            paymentPolicy="NONE",
-            includeClosed=False,
-            bestRateOnly=True,
-            view="FULL",
-            sort="PRICE"
-        )
-        return response.data
-    except ResponseError as e:
-        return {"error": str(e)}
+def search_hotels(location: str):
+    url = f"https://api.content.tripadvisor.com/api/v1/location/search"
+    params = {
+        "key": TRIPADVISOR_API_KEY,
+        "searchQuery": location,
+        "category": "hotels",
+        "language": "pl"
+    }
+    response = requests.get(url, params=params)
+    if response.status_code == 200:
+        return response.json()
+    return {"error": response.text}
