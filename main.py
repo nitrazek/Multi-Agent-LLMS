@@ -51,14 +51,19 @@ def set_debug_level():
         default=debug_level
     ).ask()
 
-def print_state_messages(state):
+def print_state_messages(state, tools=False):
     for message in state["messages"]:
         match message.__class__.__name__:
             case "HumanMessage":
                 print(f"HUMAN -> {message.content}")
             case "AIMessage":
                 print(f"AI ({message.name}) -> {message.content}")
+                if not tools or len(message.tool_calls) == 0:
+                    return
+                print(f"TOOL CALLS -> {message.tool_calls}")
             case "ToolMessage":
+                if not tools:
+                    return
                 print(f"TOOL ({message.name}) -> {message.content}")
 
 def make_call_agent(agent: Pregel):
@@ -79,7 +84,7 @@ def make_call_agent(agent: Pregel):
                 # Wypisz wszystkie nowe wiadomości (czyli te, które pojawiły się w output, a nie było ich w state)
                 new_count = len(output["messages"]) - len(state["messages"])
                 if new_count > 0:
-                    print_state_messages({"messages": output["messages"][-new_count:]})
+                    print_state_messages({"messages": output["messages"][-new_count:]}, tools=True)
         output["messages"] = [message for message in output["messages"] if not isinstance(message, ToolMessage)]
         output["messages"] = [message for message in output["messages"] if not isinstance(message, AIMessage) or len(message.tool_calls) == 0]
         return output
