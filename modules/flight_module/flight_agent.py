@@ -3,6 +3,15 @@ from langgraph.prebuilt import create_react_agent
 from pydantic import BaseModel
 from datetime import datetime, time
 
+# flight_agent_prompt = """
+# Jesteś agentem wyszukiwania lotów.
+# Otrzymujesz dane dotyczące miejsca początkowego, docelowego oraz daty podróży
+# Twoje zadania to:
+# - znalezienie najtańszego dostępnego lotu z miejsca początkowego do miejsca docelowego dla podanej daty początkowej
+# - znalezienie najtańszego dostępnego powrotnego lotu z miejsca docelowego do miejsca początkowego dla podanej daty końcowej
+# Do wykonania zadań wykorzystaj narzędzie FlightSearch do wyszukiwania lotów
+# """
+
 flight_agent_prompt = """
 Jesteś agentem wyszukiwania lotów.
 Otrzymujesz dane dotyczące miejsca początkowego, docelowego oraz daty podróży
@@ -10,6 +19,15 @@ Twoje zadania to:
 - znalezienie najtańszego dostępnego lotu z miejsca początkowego do miejsca docelowego dla podanej daty początkowej
 - znalezienie najtańszego dostępnego powrotnego lotu z miejsca docelowego do miejsca początkowego dla podanej daty końcowej
 Do wykonania zadań wykorzystaj narzędzie FlightSearch do wyszukiwania lotów
+
+Dla każdego lotu zwróć następujące dane:
+- linia lotnicza
+- lotnisko początkowe
+- data i godzina odlotu z lotniska początkowego
+- lotnisko docelowe
+- data i godzina przylotu na lotnisko docelowe
+- cena lotu
+- czas lotu
 """
 
 flight_agent_output_prompt = """
@@ -55,5 +73,5 @@ def create_flight_agent(ollama_llm):
         model=ollama_llm,
         tools=[search_flights],
         prompt=flight_agent_prompt,
-        response_format=(flight_agent_output_prompt, FlightAgentResponse)
+        # response_format=(flight_agent_output_prompt, FlightAgentResponse)
     )
