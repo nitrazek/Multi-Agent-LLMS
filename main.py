@@ -10,7 +10,6 @@ from modules.flight_module.flight_agent import create_flight_agent
 from modules.hotel_module.hotel_agent import create_hotel_agent
 from modules.restaurant_module.restaurant_agent import create_restaurant_agent
 from modules.poi_module.poi_agent import create_poi_agent
-from modules.analytics_module.analytics_agent import create_analytics_agent
 from modules.output_module.output_agent import create_output_agent
 
 from langgraph.pregel import Pregel
@@ -30,7 +29,6 @@ flight_agent = create_flight_agent(ollama_llm)
 hotel_agent = create_hotel_agent(ollama_llm)
 restaurant_agent = create_restaurant_agent(ollama_llm)
 poi_agent = create_poi_agent(ollama_llm)
-analytics_agent = create_analytics_agent(ollama_llm)
 output_agent = create_output_agent(ollama_llm)
 
 print_lock = threading.Lock()
@@ -100,27 +98,18 @@ multi_agent_graph = (
     .add_node("hotel_agent", make_call_agent(hotel_agent))
     .add_node("restaurant_agent", make_call_agent(restaurant_agent))
     .add_node("poi_agent", make_call_agent(poi_agent))
-    # Analytics agent
-    .add_node("analytics_agent", make_call_agent(analytics_agent))
     # Output agent
     .add_node("output_agent", make_call_agent(output_agent))
-    # Przepływ: input -> równolegle 4 agentów -> analytics -> output
+    # Przepływ: input -> równolegle 4 agentów -> output
     .add_edge(START, "input_agent")
     .add_edge("input_agent", "flight_agent")
     .add_edge("input_agent", "hotel_agent")
     .add_edge("input_agent", "restaurant_agent")
     .add_edge("input_agent", "poi_agent")
-    # Po zakończeniu wszystkich rekomendacji, przechodzimy do analytics
-    # .add_edge("flight_agent", "analytics_agent")
-    # .add_edge("hotel_agent", "analytics_agent")
-    # .add_edge("restaurant_agent", "analytics_agent")
-    # .add_edge("poi_agent", "analytics_agent")
     .add_edge("flight_agent", "output_agent")
     .add_edge("hotel_agent", "output_agent")
     .add_edge("restaurant_agent", "output_agent")
     .add_edge("poi_agent", "output_agent")
-    # Rekomendacje + analytics -> output
-    # .add_edge("analytics_agent", "output_agent")
     .compile()
 )
 
