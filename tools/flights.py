@@ -34,4 +34,4 @@ def search_flights(origin: str, destination: str, departure_date: str, return_da
         response = amadeus.shopping.flight_offers_search.get(**params)
         return response.data
     except ResponseError as e:
-        return { "contencik": "hehe lool", "error_status": e.response.status_code, "error_content": e.response.result }
+        return { "error_status": e.response.status_code, "error_content": e.response.result }
